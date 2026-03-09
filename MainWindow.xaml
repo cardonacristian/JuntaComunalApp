@@ -1,0 +1,463 @@
+﻿<Window x:Class="JuntaComunalApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JuntaComunalApp"
+        mc:Ignorable="d"
+        Height="800" Width="1290"
+        Icon="/Imagenes/Escudo_Acción_Comunal_Colombia.ico"
+        Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style x:Key="LogoButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent" 
+                    BorderBrush="Transparent" 
+                    BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="WatermarkTextBox" TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                SnapsToDevicePixels="True">
+                            <Grid>
+                                <TextBlock Text="{TemplateBinding Tag}"
+                    Foreground="Gray"
+                    VerticalAlignment="Center"
+                    Margin="5,0,0,0"
+                    IsHitTestVisible="False"
+                    Visibility="Collapsed"
+                    x:Name="Watermark"/>
+                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Text.Length, RelativeSource={RelativeSource Self}}" Value="0">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="WatermarkPasswordBox" TargetType="PasswordBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    SnapsToDevicePixels="True">
+                            <Grid>
+                                <TextBlock Text="{TemplateBinding Tag}"
+                               Foreground="Gray"
+                               VerticalAlignment="Center"
+                               Margin="5,0,0,0"
+                               IsHitTestVisible="False"
+                               Visibility="Collapsed"
+                               x:Name="Watermark"/>
+                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Password.Length, RelativeSource={RelativeSource Self}}" Value="0">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF7EB4EA"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#DDDDDD"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5" 
+                        SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" 
+                          Focusable="False" 
+                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                          Margin="{TemplateBinding Padding}" 
+                          RecognizesAccessKey="True" 
+                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Border Background="#F0F2F5" x:Name="borderTodo">
+
+        <Grid Margin="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="colMenu" Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Column="0" Grid.ColumnSpan="2" 
+                    Background="White" CornerRadius="8" Margin="0,0,0,10" Padding="15,0" x:Name="borderTitulo">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Column="0">
+                        <Button x:Name="btnHome"
+                                Click="BtnHome_Click" 
+                                Cursor="Hand"
+                                Style="{StaticResource LogoButtonStyle}"
+                                Background="Transparent" 
+                                BorderBrush="Transparent">
+                            <Image Source="/Imagenes/Escudo_Acción_Comunal_Colombia.png"
+                                   Width="45" 
+                                   Height="45"
+                                   Margin="0,0,12,0"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+                        <TextBlock Text="Gestor de Miembros Berlin N°2"
+                                    VerticalAlignment="Center"
+                                    Foreground="#2C3E50"
+                                    FontSize="20"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="2">
+                        <TextBlock x:Name="lblBienvenida"
+                                   Text="Bienvenido, Usuario"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,10,0"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"/>
+                        <Button x:Name="btnUsuario" Content="▼" Click="BtnUsuario_Click" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="0" Padding="8,4" Cursor="Hand">
+                            <Button.ContextMenu>
+                                <ContextMenu x:Name="menuUsuario">
+                                    <MenuItem Header="Cambiar Usuario" Click="MenuItem_CambiarUsuario_Click"/>
+                                    <Separator/>
+                                    <MenuItem Header="Cerrar Sesión" Click="MenuItem_CerrarSesion_Click"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="0"
+                    Background="White" CornerRadius="8" Margin="0,0,10,0" x:Name="borderMenu">
+                <StackPanel Margin="10">
+                    <TextBlock Text="MENÚ" FontSize="12" Foreground="Gray" FontWeight="Bold" Margin="5,0,0,10"/>
+                    <Expander Header="Acciones"
+                              FontSize="14"
+                              Width="180"
+                              IsExpanded="False"
+                              Style="{StaticResource ExpanderAccionesStyle}">
+                        <StackPanel Margin="0,10,0,0">
+                            <Button Content="➕ Agregar Miembro"
+                                        Height="35"
+                                        Margin="0,0,0,5"
+                                        BorderBrush="Black"
+                                        Background="Transparent"
+                                        Click="BtnAgregar_Click"/>
+                            <Button Content="🚫 Desactivar Miembro"
+                                        Height="35"
+                                        BorderBrush="Black"
+                                        Background="Transparent"
+                                        Click="BtnDesactivar_Click"/>
+                        </StackPanel>
+                    </Expander>
+                    <Expander Header="Usuarios"
+                              FontSize="14"
+                              Width="180"
+                              IsExpanded="False"
+                              Margin="0,5,0,0"
+                              Style="{StaticResource ExpanderAccionesStyle}">
+                        <StackPanel Margin="0,10,0,0">
+                            <Button Content="Gestionar Usuarios"
+                                        Height="35"
+                                        Margin="0,0,0,5"
+                                        BorderBrush="Black"
+                                        Background="Transparent"
+                                        Click="BtnGestionarUsuario_Click"/>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="1"
+                    Background="White" CornerRadius="8" Padding="10" x:Name="borderPrincipal" Visibility="Visible">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="250"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Lista de Miembros activos" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" Grid.Column="0"/>
+                        <StackPanel Orientation="Vertical" Grid.Column="2" HorizontalAlignment="Right">
+                            <Label Target="{Binding ElementName=txtBuscar}" Margin="0,0,10,0">
+                                <TextBlock Text="Buscar"/>
+                            </Label>
+                            <TextBox x:Name="txtBuscar" TextChanged="txtBuscar_TextChanged" Tag="Buscar por nombre o cedula"
+                                     Grid.Column="2" Background="White" BorderBrush="Black" BorderThickness="1" Margin="0,0,10,5" Width="200"
+                                     Style="{StaticResource WatermarkTextBox}"/>
+                        </StackPanel>
+                    </Grid>
+                    <DataGrid x:Name="dgMiembros"
+                               BorderThickness="0"
+                               Background="Transparent"
+                               AutoGenerateColumns="False"
+                               IsReadOnly="True"
+                               CanUserAddRows="False"
+                               HorizontalScrollBarVisibility="Auto"
+                               Grid.Row="1">
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="8,4"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Cedula" Binding="{Binding Cedula}" Width="80"/>
+                            <DataGridTextColumn Header="Nombre" Binding="{Binding NombreCompleto}" Width="*"/>
+                            <DataGridTextColumn Header="Telefono" Binding="{Binding Telefono}" Width="100"/>
+                            <DataGridTextColumn Header="Dirección" Binding="{Binding Direccion}" Width="150"/>
+                            <DataGridTextColumn Header="Género" Binding="{Binding Genero}" Width="80"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
+                            <DataGridTextColumn Header="Fecha de Ingreso" Binding="{Binding FechaIngreso, StringFormat=d}" Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="Editar" Width="60" x:Name="columnEditar">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="✏️"
+                                                Padding="6,2"
+                                                Background="#4caf50"
+                                                Foreground="White"
+                                                Click="BtnEditar_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" Grid.Row="2">
+                        <Button Content="«" Click="BtnPrimera_Click" Width="30" Margin="5" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
+                        <Button Content="Anterior" Click="BtnAnterior_Click" Width="70" Margin="5" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
+
+                        <TextBlock x:Name="lblPaginacion" Text="Página 1 de 1" 
+                                  VerticalAlignment="Center" Margin="15,0" FontWeight="Bold"/>
+
+                        <Button Content="Siguiente" Click="BtnSiguiente_Click" Width="70" Margin="5" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
+                        <Button Content="»" Click="BtnUltima_Click" Width="30" Margin="5" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                        <Button Content="📥 Exportar Lista"
+                                HorizontalAlignment="Right"
+                                Margin="0,10,0,0"
+                                Background="Transparent"
+                                Padding="20,5"
+                                Click="BtnExportar_Click">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Exportar a PDF" Click="ExportarPDF_Click"/>
+                                    <MenuItem Header="Exportar a Excel" Click="ExportarExcel_Click"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                        <Button Background="Transparent" 
+                                Padding="20,5" 
+                                Margin="10,10,0,0"
+                                Click="ImprimirReporte_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Fill="Black" Data="M19,8H5C3.34,8 2,9.34 2,11V17H6V21H18V17H22V11C22,9.34 20.66,8 19,8M16,19H8V14H16V19M19,12C18.45,12 18,11.55 18,11C18,10.45 18.45,10 19,10C19.55,10 20,10.45 20,11C20,11.55 19.55,12 19,12M18,3H6V7H18V3Z" />
+                                    </Canvas>
+                                </Viewbox>
+                                <TextBlock Text="Imprimir Lista" 
+                                           VerticalAlignment="Center" 
+                                           Margin="8,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border x:Name="borderDesactivar" Grid.Row="1" Grid.Column="1"
+                    Background="White" CornerRadius="8" Padding="10" Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button Content="⬅ Regresar" Click="BtnRegresar_Click"
+                                Background="#f44336" Foreground="White" Padding="10,5" Margin="0,0,15,0"/>
+                        <TextBlock Text="Gestión de Miembros (Activar/Desactivar)" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+                    </StackPanel>
+                    <DataGrid x:Name="dgDesactivar" Grid.Row="1"
+                              BorderThickness="0" Background="Transparent" AutoGenerateColumns="False"
+                              IsReadOnly="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Estado" Width="60">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Activo, UpdateSourceTrigger=PropertyChanged}"
+                                                  Click="ChkEstado_click" HorizontalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Cedula" Binding="{Binding Cedula}" IsReadOnly="True" Width="80"/>
+                            <DataGridTextColumn Header="Nombre" Binding="{Binding NombreCompleto}" IsReadOnly="True" Width="*"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" IsReadOnly="True" Width="200"/>
+                            <DataGridTextColumn Header="Fecha de Salida" Binding="{Binding FechaSalida, StringFormat=d}" IsReadOnly="True" Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+            <Border x:Name="borderUsuarios" Grid.Row="1" Grid.Column="1"
+                    Background="White" CornerRadius="8" Padding="10" Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Gestión de Usuarios" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="2">
+                            <Button Content="Crear Usuario" Click="BtnCrearUsuario_Click"
+                                    Background="#4caf50" Foreground="White" Padding="10,5" Margin="0,0,15,0"/>
+                            <Button Content="Desactivar" Click="BtnDesactivarUsuario_Click"
+                                    Background="#f44336" Foreground="White" Padding="10,5" Margin="0,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                    <DataGrid x:Name="dgUsuarios" Grid.Row="1"
+                                BorderThickness="0" Background="Transparent" AutoGenerateColumns="False"
+                                IsReadOnly="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Usuario" Binding="{Binding Username}" IsReadOnly="True" Width="80"/>
+                            <DataGridTextColumn Header="Rol" Binding="{Binding Rol}" IsReadOnly="True" Width="*"/>
+                            <DataGridTemplateColumn Header="Editar" Width="60">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="✏️"
+                                                Padding="6,2"
+                                                Background="#4caf50"
+                                                Foreground="White"
+                                                Click="BtnEditarUsuario_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+            <Border x:Name="borderUsuariosDesactivar" Grid.Row="1" Grid.Column="1"
+        Background="White" CornerRadius="8" Padding="10" Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0">
+                            <Button Content="⬅ Regresar" Click="BtnRegresarDesactivado_Click"
+                                    Background="#f44336" Foreground="White" Padding="10,5" Margin="0,0,15,0"/>
+                            <TextBlock Text="(Activar/Desactivar) Usuarios" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+                        </StackPanel>
+                    </Grid>
+                    <DataGrid x:Name="dgUsuariosDesactivados" Grid.Row="1"
+                                BorderThickness="0" Background="Transparent" AutoGenerateColumns="False"
+                                IsReadOnly="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Estado" Width="60">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Activo, UpdateSourceTrigger=PropertyChanged}"
+                                                  Click="ChkEstadoUsuario_click" HorizontalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Usuario" Binding="{Binding Username}" IsReadOnly="True" Width="80"/>
+                            <DataGridTextColumn Header="Rol" Binding="{Binding Rol}" IsReadOnly="True" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+
+</Window>

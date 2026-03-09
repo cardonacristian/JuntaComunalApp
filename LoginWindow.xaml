@@ -1,0 +1,212 @@
+﻿<Window x:Class="JuntaComunalApp.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JuntaComunalApp"
+        Icon="/Imagenes/Escudo_Acción_Comunal_Colombia.ico"
+        mc:Ignorable="d"
+        Title="Iniciar Sesión" Height="350" Width="400">
+    <Window.Resources>
+        <Style x:Key="WatermarkTextBox" TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                            <Grid>
+                                <TextBlock Text="{TemplateBinding Tag}"
+                            Foreground="Gray"
+                            VerticalAlignment="Center"
+                            Margin="5,0,0,0"
+                            IsHitTestVisible="False"
+                            Visibility="Collapsed"
+                            x:Name="Watermark"/>
+                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Text.Length, RelativeSource={RelativeSource Self}}" Value="0">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="WatermarkPasswordBox" TargetType="PasswordBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                            <Grid>
+                                <TextBlock Text="{TemplateBinding Tag}"
+                                       Foreground="Gray"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed"
+                                       x:Name="Watermark"/>
+                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Password.Length, RelativeSource={RelativeSource Self}}" Value="0">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF7EB4EA"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#DDDDDD"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5" 
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" 
+                                  Focusable="False" 
+                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                  Margin="{TemplateBinding Padding}" 
+                                  RecognizesAccessKey="True" 
+                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Border x:Name="borderLogin" Background="#F0F2F5">
+        <Border x:Name="borderTodo" Background="#63BD00" CornerRadius="8" Grid.Row="0" Margin="5,5,5,5" BorderBrush="Black" BorderThickness="2">
+            <Grid x:Name="gridLogin">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Vertical" Grid.Row="0" x:Name="stackLogo">
+                    <Image Source="/Imagenes/Escudo_Acción_Comunal_Colombia.png"
+                           Width="60"
+                           Height="60"
+                           Margin="0,10,0,0"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text=" BERLIN N°2"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Foreground="#2C3E50"
+                               FontSize="20"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" x:Name="stackTextBlocks">
+                    <Label Target="{Binding ElementName=txtUsuario}" Margin="5,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Usuario"/>
+                            <TextBlock Text="*" Foreground="Red" FontWeight="Bold" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Label>
+                    <TextBox x:Name="txtUsuario" Style="{StaticResource WatermarkTextBox}" Tag="Ingrese el usuario" BorderBrush="Black" Margin="5,0,5,5"/>
+                    <Label Target="{Binding ElementName=txtPassword}" Margin="5,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Contraseña"/>
+                            <TextBlock Text="*" Foreground="Red" FontWeight="Bold" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Label>
+                    <Grid>
+                        <TextBox x:Name="txtPasswordRevelado"
+                                   Text="{Binding ElementName=txtPassword, Path=Password, Mode=OneWay}"
+                                   Visibility="Collapsed"
+                                   BorderBrush="Black"
+                                   VerticalContentAlignment="Center"
+                                   Padding="5,0,30,0" Tag="Contraseña" Margin="5,0,5,5"
+                                   Style="{StaticResource WatermarkTextBox}"/>
+                        <PasswordBox x:Name="txtPassword" BorderBrush="Black" Padding="5,0,30,0" Margin="5,0,5,5"
+                                       PasswordChar="●" VerticalContentAlignment="Center"/>
+                        <ToggleButton x:Name="btnVerPassword" Content="👁" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent"
+                                      Cursor="Hand" Checked="btnVerPassword_Checked" Unchecked="btnVerPassword_Unchecked" Margin="5,0,5,5"/>
+                    </Grid>
+                </StackPanel>
+                <UniformGrid Grid.Row="2" Columns="2" Margin="30,0,30,5" VerticalAlignment="Center" x:Name="unformGridBotones">
+                    <Button x:Name="btnCerrar" 
+                            Content="Cerrar" 
+                            Height="35" Width="120"
+                            Background="#ff5c5c"
+                            BorderBrush="Black"
+                            Foreground="White"
+                            IsCancel="True"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Click="BtnCerrar_Click"/>
+                    <Button x:Name="btnIniciarSesion" 
+                            Content="Iniciar Sesión" 
+                            Height="35" Width="120"
+                            Background="#4caf50" 
+                            BorderBrush="Black"
+                            Foreground="White"
+                            IsDefault="True"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Click="BtnIniciarSesion_Click"/>
+                </UniformGrid>
+                <StackPanel Orientation="Vertical" Grid.Row="3" VerticalAlignment="Bottom" Margin="0,0,0,15">
+                    <TextBlock HorizontalAlignment="Center" Margin="0,5">
+                        <Hyperlink x:Name="lnkOlvidoPassword"
+                                   Foreground="#0078d4"
+                                   Click="lnkOlvidoPassword_Click">
+                            ¿Olvidaste tu contraseña?
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock HorizontalAlignment="Center" Margin="0,0,0,5">
+                        <Hyperlink x:Name="lnkIniciarInvitado"
+                                   Foreground="#0078d4"
+                                   Click="lnkIniciarInvitado_Click">
+                            Iniciar sesión como invitado
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Border>
+</Window>

@@ -1,0 +1,85 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="ExpanderAccionesStyle" TargetType="Expander">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Expander">
+                    <StackPanel>
+                        <ToggleButton x:Name="HeaderSite"
+                                  IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                  BorderThickness="1"
+                                  Background="Transparent"
+                                  BorderBrush="Black"
+                                  Margin="0" Height="35"
+                                  HorizontalContentAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  Content="{TemplateBinding Header}">
+
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="20"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter Grid.Column="0"
+                                                          VerticalAlignment="Center"
+                                                          HorizontalAlignment="Center"
+                                                          RecognizesAccessKey="True"/>
+                                            <Path x:Name="Arrow"
+                                              Grid.Column="1"
+                                              Stroke="Black"
+                                              StrokeThickness="2"
+                                              Data="M 0 0 L 6 6 L 12 0"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center">
+                                                <Path.RenderTransform>
+                                                    <RotateTransform Angle="0" CenterX="6" CenterY="3"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- ROTACIÓN FLECHA -->
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Arrow"
+                                                Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <RotateTransform Angle="180" CenterX="6" CenterY="3"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+
+                        <!-- CONTENIDO -->
+                        <ContentPresenter x:Name="ExpandSite"
+                                      Visibility="Collapsed"
+                                      Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <!-- EXPANDER TRIGGER -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="ExpandSite"
+                                Property="Visibility"
+                                Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

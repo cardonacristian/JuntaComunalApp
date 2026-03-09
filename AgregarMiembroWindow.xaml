@@ -1,0 +1,194 @@
+﻿<Window x:Class="JuntaComunalApp.AgregarMiembroWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JuntaComunalApp"
+        mc:Ignorable="d"
+        Title="Agregar Miembro" Height="500" Width="400"
+        WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <Style x:Key="WatermarkTextBox" TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost"/>
+                                <TextBlock Text="{TemplateBinding Tag}"
+                                    Foreground="Gray"
+                                    VerticalAlignment="Center"
+                                    Margin="5,0,0,0"
+                                    IsHitTestVisible="False"
+                                    Visibility="Collapsed"
+                                    x:Name="Watermark"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Watermark"
+                                        Property="Visibility"
+                                        Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#DDDDDD"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5" 
+                            SnapsToDevicePixels="true">
+
+                            <ContentPresenter x:Name="contentPresenter" 
+                                          Focusable="False" 
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                          Margin="{TemplateBinding Padding}" 
+                                          RecognizesAccessKey="True" 
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Cédula"/>
+                <TextBlock Text=" *" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+            <TextBox x:Name="txtCedula" Style="{StaticResource WatermarkTextBox}" Tag="Cédula" BorderBrush="Black" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Primer Nombre"/>
+                <TextBlock Text=" *" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+            <TextBox x:Name="txtPrimerNombre" Style="{StaticResource WatermarkTextBox}" Tag="Primer Nombre" BorderBrush="Black" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Segundo Nombre"/>
+            </StackPanel>
+            <TextBox x:Name="txtSegundoNombre" Style="{StaticResource WatermarkTextBox}" Tag="Segundo Nombre" BorderBrush="Black" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Primer Apellido"/>
+                <TextBlock Text=" *" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+            <TextBox x:Name="txtPrimerApellido" Style="{StaticResource WatermarkTextBox}" Tag="Primer Apellido" BorderBrush="Black" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Segundo Apellido"/>
+            </StackPanel>
+            <TextBox x:Name="txtSegundoApellido" Style="{StaticResource WatermarkTextBox}" Tag="Segundo Apellido" BorderBrush="Black" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Email"/>
+            </StackPanel>
+            <TextBox x:Name="txtEmail" Style="{StaticResource WatermarkTextBox}" Tag="Email" BorderBrush="Black" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Telefono"/>
+                <TextBlock Text=" *" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+            <TextBox x:Name="txtTelefono" Style="{StaticResource WatermarkTextBox}" Tag="Telefono" BorderBrush="Black" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Dirección"/>
+                <TextBlock Text=" *" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+            <TextBox x:Name="txtDireccion" Style="{StaticResource WatermarkTextBox}" Tag="Dirección" BorderBrush="Black" Margin="0,0,0,1"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Genero"/>
+                <TextBlock Text=" *" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+            <ComboBox x:Name="cmbGenero"
+                      Height="25"
+                      Margin="0,0,0,0"
+                      VerticalContentAlignment="Center"
+                      BorderBrush="Black"
+                      SelectedValuePath="Content"
+                      SelectedIndex="0">
+                    <ComboBoxItem Content="Masculino"/>
+                    <ComboBoxItem Content="Femenino"/>
+                    <ComboBoxItem x:Name="optionOtro" Content="Otro"/>
+                </ComboBox>
+                <TextBox x:Name="txtOtroGenero"
+                     Tag="Especifique su género"
+                     BorderBrush="Black"
+                     Margin="0,0,0,5">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource WatermarkTextBox}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=cmbGenero, Path=SelectedValue}" Value="Otro">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+            <StackPanel>
+                <TextBlock Text="Nota: Las filas marcadas con * son obligatorias" Foreground="DimGray"/>
+            </StackPanel>
+            </StackPanel>
+            <Grid Grid.Row="1" Margin="0,15,0,0">
+            <Button x:Name="btnCancelar"
+                    Content="Cancelar"
+                    Height="35"
+                    Width="120"
+                    Margin="50,0,0,0"
+                    Background="#ff5c5c"
+                    Foreground="White"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    IsCancel="True"
+                    Click="BtnCancelar_Click"/>
+            
+            <Button x:Name="btnGuardar"
+                    Content="Guardar"
+                    Height="35"
+                    Width="120"
+                    Margin="0,0,50,0"
+                    Background="#4caf50"
+                    Foreground="White"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    IsDefault="True"
+                    Click="BtnGuardar_Click"/>
+            
+        </Grid>
+    </Grid>
+</Window>
