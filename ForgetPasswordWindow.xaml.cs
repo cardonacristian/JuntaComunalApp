@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,15 +62,15 @@ namespace JuntaComunalApp
             Usuario usuario = new Usuario();
             usuario.Username = txtUsuario.Text.Trim();
             usuario.Password = Seguridad.EncriptarHash(txtPassword.Password);
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
+            string cs = Conexion.ObtenerCadena();
             string sql = @"
             UPDATE Usuarios
             SET Password = @Password
             WHERE Usuario = @Usuario";
             try
             {
-                using (SqlConnection conn = new SqlConnection(cs))
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(cs))
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Password", usuario.Password);
                     cmd.Parameters.AddWithValue("@Usuario", usuario.Username);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,10 +49,8 @@ namespace JuntaComunalApp
         }
         private Usuario ObtenerUsuarios(string user)
         {
-            string cs = ConfigurationManager
-                .ConnectionStrings["ConexionDB"]
-                .ConnectionString;
-            using (SqlConnection conn = new SqlConnection(cs))
+            string cs = Conexion.ObtenerCadena();
+            using (SQLiteConnection conn = new SQLiteConnection(cs))
             {
                 conn.Open();
 
@@ -61,10 +60,10 @@ namespace JuntaComunalApp
                 ON u.IdRol = r.Id
                 WHERE u.Usuario = @user";
 
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@user", user);
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    using (SQLiteDataReader dr = cmd.ExecuteReader())
                     {
                         if (dr.Read())
                         {
@@ -85,11 +84,11 @@ namespace JuntaComunalApp
         }
         private bool ValidarUsuario(string usuario, string password)
         {
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
+            string cs = Conexion.ObtenerCadena();
             string sql = "SELECT COUNT(1) FROM Usuarios WHERE Usuario = @user AND Password = @pass AND Activo = 1";
 
-            using (SqlConnection conn = new SqlConnection(cs))
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            using (SQLiteConnection conn = new SQLiteConnection(cs))
+            using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
             {
                 cmd.Parameters.AddWithValue("@user", usuario);
                 cmd.Parameters.AddWithValue("@pass", password);

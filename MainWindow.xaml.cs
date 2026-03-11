@@ -13,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Data.SqlClient;
 using System.Configuration;
 using JuntaComunalApp.Models;
 using ClosedXML.Excel;
@@ -27,7 +26,7 @@ using Table = iText.Layout.Element.Table;
 using iText.Kernel.Geom;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
-
+using System.Data.SQLite;
 
 namespace JuntaComunalApp
 {
@@ -150,10 +149,8 @@ namespace JuntaComunalApp
         private List<Miembro> ObtenerMiembros()
         {
             var lista = new List<Miembro>();
-            string cs = ConfigurationManager
-                .ConnectionStrings["ConexionDB"]
-                .ConnectionString;
-            using (SqlConnection conn = new SqlConnection (cs)) {
+            string cs = Conexion.ObtenerCadena();
+            using (SQLiteConnection conn = new SQLiteConnection (cs)) {
                 conn.Open();
 
                 string sql = @"
@@ -162,8 +159,8 @@ namespace JuntaComunalApp
                 FROM Miembros
                 WHERE Activo = 1";
 
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                using (SQLiteDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -190,10 +187,8 @@ namespace JuntaComunalApp
         private List<Usuario> ObtenerUsuarios()
         {
             var lista = new List<Usuario>();
-            string cs = ConfigurationManager
-                .ConnectionStrings["ConexionDB"]
-                .ConnectionString;
-            using (SqlConnection conn = new SqlConnection(cs))
+            string cs = Conexion.ObtenerCadena();
+            using (SQLiteConnection conn = new SQLiteConnection(cs))
             {
                 conn.Open();
 
@@ -204,8 +199,8 @@ namespace JuntaComunalApp
                 WHERE u.Activo = 1
                 AND u.Usuario <> 'Invitado'";
 
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                using (SQLiteDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -225,10 +220,8 @@ namespace JuntaComunalApp
         private List<Miembro> ObtenerMiembrosTodos()
         {
             var lista = new List<Miembro>();
-            string cs = ConfigurationManager
-                .ConnectionStrings["ConexionDB"]
-                .ConnectionString;
-            using (SqlConnection conn = new SqlConnection(cs))
+            string cs = Conexion.ObtenerCadena();
+            using (SQLiteConnection conn = new SQLiteConnection(cs))
             {
                 conn.Open();
 
@@ -237,8 +230,8 @@ namespace JuntaComunalApp
                 FechaIngreso, FechaSalida, Id, PrimerNombre, PrimerApellido, SegundoNombre, SegundoApellido, Activo
                 FROM Miembros";
 
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                using (SQLiteDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -267,10 +260,8 @@ namespace JuntaComunalApp
         private List<Usuario> ObtenerUsuariosTodos()
         {
             var lista = new List<Usuario>();
-            string cs = ConfigurationManager
-                .ConnectionStrings["ConexionDB"]
-                .ConnectionString;
-            using (SqlConnection conn = new SqlConnection(cs))
+            string cs = Conexion.ObtenerCadena();
+            using (SQLiteConnection conn = new SQLiteConnection(cs))
             {
                 conn.Open();
 
@@ -280,8 +271,8 @@ namespace JuntaComunalApp
                 ON u.IdRol = r.Id
                 WHERE u.Usuario NOT IN ('Invitado', 'admin')";
 
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                using (SQLiteDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -302,15 +293,15 @@ namespace JuntaComunalApp
         {
             try
             {
-                string cs = ConfigurationManager.ConnectionStrings["conexionDB"].ConnectionString;
-                using(SqlConnection conn = new SqlConnection(cs))
+                string cs = Conexion.ObtenerCadena();
+                using(SQLiteConnection conn = new SQLiteConnection(cs))
                 {
                     conn.Open();
                     string sql = @"UPDATE Miembros
                                    SET Activo = @Activo,
                                        FechaSalida = @Fecha
                                    WHERE Id = @Id";
-                    using(SqlCommand cmd = new SqlCommand(sql, conn))
+                    using(SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@Activo", estaActivo);
                         cmd.Parameters.AddWithValue("@Id", id);
@@ -335,14 +326,14 @@ namespace JuntaComunalApp
         {
             try
             {
-                string cs = ConfigurationManager.ConnectionStrings["conexionDB"].ConnectionString;
-                using (SqlConnection conn = new SqlConnection(cs))
+                string cs = Conexion.ObtenerCadena();
+                using (SQLiteConnection conn = new SQLiteConnection(cs))
                 {
                     conn.Open();
                     string sql = @"UPDATE Usuarios
                                    SET Activo = @Activo
                                    WHERE Id = @Id";
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@Activo", estaActivo);
                         cmd.Parameters.AddWithValue("@Id", id);

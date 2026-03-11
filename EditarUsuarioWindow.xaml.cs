@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,13 +43,13 @@ namespace JuntaComunalApp
         public List<Rol> ObtenerRoles()
         {
             var lista = new List<Rol>();
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
-            using (SqlConnection conn = new SqlConnection(cs))
+            string cs = Conexion.ObtenerCadena();
+            using (SQLiteConnection conn = new SQLiteConnection(cs))
             {
                 string sql = "SELECT Id, Rol FROM Roles";
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                SQLiteCommand cmd = new SQLiteCommand(sql, conn);
                 conn.Open();
-                using (SqlDataReader dr = cmd.ExecuteReader())
+                using (SQLiteDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -64,58 +65,52 @@ namespace JuntaComunalApp
         }
         private void BtnActualizar_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtPassword.Password) ||
-                cmbRol.SelectedValue == null ||
-                string.IsNullOrWhiteSpace(txtPasswordConfirm.Password))
+            if (cmbRol.SelectedValue == null)
             {
-                txtPassword.BorderBrush = Brushes.Red;
-                txtPassword.BorderThickness = new Thickness(1);
-                txtPasswordConfirm.BorderBrush = Brushes.Red;
-                txtPasswordConfirm.BorderThickness = new Thickness(1);
                 cmbRol.BorderBrush = Brushes.Red;
-                cmbRol.BorderThickness = new Thickness(1);
-                MessageBox.Show("Por favor, complete todos los campos obligatorios.");
-                return;
+                MessageBox.Show("Por favor, seleccione un rol.");
+                return; 
+            }
+            if (string.IsNullOrWhiteSpace(txtPassword.Password))
+            {
+                if (txtPassword.Password != txtPasswordConfirm.Password)
+                {
+                    MessageBox.Show("Las Contraseñas no coinciden", "Error de Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtPassword.Clear();
+                    txtPasswordConfirm.Clear();
+
+                    txtPassword.Focus();
+                    return;
+                }
+            }
+            string cs = Conexion.ObtenerCadena();
+            string sql;
+            bool cambiaPassword = !string.IsNullOrWhiteSpace(txtPassword.Password);
+            if (cambiaPassword)
+            {
+                sql = @"UPDATE Usuarios 
+                SET Password = @Password, IdRol = @IdRol 
+                WHERE Id = @Id";
             }
             else
             {
-                txtPassword.BorderBrush = Brushes.Black;
-                txtPassword.BorderThickness = new Thickness(1);
-                txtPasswordConfirm.BorderBrush = Brushes.Black;
-                txtPasswordConfirm.BorderThickness = new Thickness(1);
-                cmbRol.BorderBrush = Brushes.Black;
-                cmbRol.BorderThickness = new Thickness(1);
+                sql = @"UPDATE Usuarios 
+                SET IdRol = @IdRol 
+                WHERE Id = @Id";
             }
-            if (txtPassword.Password != txtPasswordConfirm.Password)
-            {
-                MessageBox.Show("Las Contraseñas no coinciden", "Error de Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                txtPassword.Clear();
-                txtPasswordConfirm.Clear();
-
-                txtPassword.Focus();
-                return;
-            }
-            if (cmbRol.SelectedValue == null)
-            {
-                MessageBox.Show("Selecciona un rol.");
-                return;
-            }
-            Usuario usuario = new Usuario();
-            usuario.Password = Seguridad.EncriptarHash(txtPassword.Password);
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
-            string sql = @"
-            UPDATE Usuarios
-            SET Password = @Password,
-                IdRol = @IdRol
-            WHERE Id = @Id";
             try
             {
-                using (SqlConnection conn = new SqlConnection(cs))
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(cs))
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Password", usuario.Password);
                     cmd.Parameters.AddWithValue("@IdRol", (int)cmbRol.SelectedValue);
                     cmd.Parameters.AddWithValue("@Id", _usuario.Id);
+
+                    if(cambiaPassword)
+                    {
+                        string passwordEncriptada = Seguridad.EncriptarHash(txtPassword.Password);
+                        cmd.Parameters.AddWithValue("@Password", passwordEncriptada);
+                    }
 
                     conn.Open();
                     cmd.ExecuteNonQuery();

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,13 +35,13 @@ namespace JuntaComunalApp
         public List<Rol> ObtenerRoles()
         {
             var lista = new List<Rol>();
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
-            using(SqlConnection conn = new SqlConnection(cs))
+            string cs = Conexion.ObtenerCadena();
+            using(SQLiteConnection conn = new SQLiteConnection(cs))
             {
                 string sql = "SELECT Id, Rol FROM Roles";
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                SQLiteCommand cmd = new SQLiteCommand(sql, conn);
                 conn.Open();
-                using(SqlDataReader dr = cmd.ExecuteReader())
+                using(SQLiteDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -101,7 +102,7 @@ namespace JuntaComunalApp
             usuario.Username = txtUsuario.Text.Trim();
             usuario.Password = Seguridad.EncriptarHash(txtPassword.Password);
             usuario.IdRol = (int)cmbRol.SelectedValue;
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
+            string cs = Conexion.ObtenerCadena();
             string sql = @"
             INSERT INTO Usuarios
             (Usuario, Password, IdRol)
@@ -109,8 +110,8 @@ namespace JuntaComunalApp
             (@Usuario, @Password, @IdRol)";
             try
             {
-                using (SqlConnection conn = new SqlConnection(cs))
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(cs))
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Usuario", usuario.Username);
                     cmd.Parameters.AddWithValue("@Password", usuario.Password);

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using JuntaComunalApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,13 +16,13 @@ namespace JuntaComunalApp
     /// </summary>
     public partial class App : Application
     {
+        
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             try
             {
-                
                 SeedDatabase();
 
                 LoginWindow login = new LoginWindow();
@@ -34,35 +36,49 @@ namespace JuntaComunalApp
         }
         private void SeedDatabase()
         {
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
+            string cs = Conexion.ObtenerCadena();
 
-            using (SqlConnection conn = new SqlConnection(cs))
+            using (SQLiteConnection conn = new SQLiteConnection(cs))
             {
                 conn.Open();
 
                 string sqlCheck = "SELECT COUNT(*) FROM Usuarios";
-                SqlCommand cmdCheck = new SqlCommand(sqlCheck, conn);
-                int conteo = (int)cmdCheck.ExecuteScalar();
+                SQLiteCommand cmdCheck = new SQLiteCommand(sqlCheck, conn);
+                int conteo = Convert.ToInt32(cmdCheck.ExecuteScalar());
 
                 if (conteo == 0)
                 {
-                    
+
+
+                    string sqlRoles = "INSERT OR IGNORE INTO Roles (Rol) VALUES ('ADMINISTRADOR'), ('INVITADO');";
+                    using (var cmdRoles = new SQLiteCommand(sqlRoles, conn)) { cmdRoles.ExecuteNonQuery(); }
+
+
+                    string passAdmin = Seguridad.EncriptarHash("admin1234");
+                    string passInvitado = Seguridad.EncriptarHash("1234$");
+
+
                     string sqlInsert = @"
-                        IF NOT EXISTS (SELECT * FROM Roles WHERE Rol = 'ADMINISTRADOR')
-                        INSERT INTO Roles (Rol) VALUES ('ADMINISTRADOR');
+                           INSERT INTO Usuarios (Usuario, Password, IdRol, Activo) 
+                           VALUES (@User, @Pass, (SELECT Id FROM Roles WHERE Rol = @Rol), 1)";
 
-                        IF NOT EXISTS (SELECT * FROM Roles WHERE Rol = 'INVITADO')
-                        INSERT INTO Roles (Rol) VALUES ('INVITADO');
 
-                        DECLARE @IdAdmin INT = (SELECT Id FROM Roles WHERE Rol = 'ADMINISTRADOR');
-                        DECLARE @IdInvitado INT = (SELECT Id FROM Roles WHERE Rol = 'INVITADO');
+                    using (var cmd = new SQLiteCommand(sqlInsert, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@User", "admin");
+                        cmd.Parameters.AddWithValue("@Pass", passAdmin);
+                        cmd.Parameters.AddWithValue("@Rol", "ADMINISTRADOR");
+                        cmd.ExecuteNonQuery();
+                    }
 
-                        INSERT INTO Usuarios (Usuario, Password, IdRol, Activo) 
-                        VALUES ('admin', 'admin1234', @IdAdmin, 1), 
-                               ('Invitado', '1234$', @IdInvitado, 1);";
 
-                    SqlCommand cmdInsert = new SqlCommand(sqlInsert, conn);
-                    cmdInsert.ExecuteNonQuery();
+                    using (var cmd = new SQLiteCommand (sqlInsert, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@User", "Invitado");
+                        cmd.Parameters.AddWithValue("@Pass", passInvitado);
+                        cmd.Parameters.AddWithValue("@Rol", "INVITADO");
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
         }

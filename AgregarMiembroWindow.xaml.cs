@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
+using System.Data.SQLite;
+using JuntaComunalApp.Models;
 
 namespace JuntaComunalApp
 {
@@ -102,7 +104,7 @@ namespace JuntaComunalApp
                 }
                 generoFinal = txtOtroGenero.Text.ToUpper().Trim();
             }
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
+            string cs = Conexion.ObtenerCadena();
             string sql = @"
             INSERT INTO Miembros
             (Cedula, PrimerNombre, SegundoNombre, PrimerApellido, SegundoApellido, Email, Telefono, Direccion, Genero)
@@ -110,8 +112,8 @@ namespace JuntaComunalApp
             (@Cedula, @PrimerNombre, @SegundoNombre, @PrimerApellido, @SegundoApellido, @Email, @Telefono, @Direccion, @Genero)";
             try
             {
-                using (SqlConnection conn = new SqlConnection(cs))
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(cs))
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Cedula", txtCedula.Text.Trim());
                     cmd.Parameters.AddWithValue("@PrimerNombre", txtPrimerNombre.Text.ToUpper().Trim());

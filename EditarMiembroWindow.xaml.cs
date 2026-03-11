@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -123,7 +124,7 @@ namespace JuntaComunalApp
                 }
                 generoFinal = txtOtroGenero.Text;
             }
-            string cs = ConfigurationManager.ConnectionStrings["ConexionDB"].ConnectionString;
+            string cs = Conexion.ObtenerCadena();    
             string sql = @"
             UPDATE Miembros
             SET Cedula = @Cedula, 
@@ -138,8 +139,8 @@ namespace JuntaComunalApp
             WHERE Id = @Id";
             try
             {
-                using (SqlConnection conn = new SqlConnection(cs))
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(cs))
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
                 {
                     string generoGuardar = cmbGenero.SelectedValue.ToString().Trim() == "Otro" ? txtOtroGenero.Text.ToUpper().Trim() : generoFinal.ToUpper().Trim();
                     cmd.Parameters.AddWithValue("@Cedula", txtCedula.Text.Trim());
